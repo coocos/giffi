@@ -106,11 +106,19 @@ func resizeImage(frame image.Image, width uint, height uint) image.Image {
 }
 
 func playGif(animation *gif.GIF, terminal terminalDimensions) {
+
+	frameCache := make(map[int]string)
+
+	// Render the loop first to the cache
+	for frameNumber, frame := range animation.Image {
+		resizedFrame := resizeImage(frame, terminal.width, terminal.height)
+		frameCache[frameNumber] = frameToAscii(resizedFrame)
+	}
+
 	// Loop forever because why not
 	for {
-		for frameNumber, frame := range animation.Image {
-			resizedFrame := resizeImage(frame, terminal.width, terminal.height)
-			fmt.Print(frameToAscii(resizedFrame))
+		for frameNumber := range animation.Image {
+			fmt.Print(frameCache[frameNumber])
 			time.Sleep(time.Duration(animation.Delay[frameNumber]*10) * time.Millisecond)
 		}
 	}
