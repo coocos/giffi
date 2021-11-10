@@ -87,9 +87,8 @@ func frameToAscii(frame image.Image) string {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			r, g, b, _ := frame.At(x, y).RGBA()
 			brightness := float64((r + g + b) / 3)
-			// FIXME: This is pretty gross
-			character := int(math.Floor(brightness / 65025.0 * float64(len(brightnessToAscii))))
-			buffer.WriteByte(brightnessToAscii[character%len(brightnessToAscii)])
+			character := int(math.Floor(brightness / 65536 * float64(len(brightnessToAscii))))
+			buffer.WriteByte(brightnessToAscii[character])
 		}
 		buffer.WriteString("\n")
 	}
